@@ -17,7 +17,11 @@
 #ifndef __NEXTION_H__
 #define __NEXTION_H__
 
+#if defined(SPARK)
+#include "application.h"
+#else
 #include "Arduino.h"
+#endif
 #include "NexConfig.h"
 #include "NexTouch.h"
 #include "NexHardware.h"
