@@ -15,7 +15,7 @@
  * the License, or (at your option) any later version.
  */
  
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 /*
  * Declare a crop object [page id:0,component id:1, component name: "q0"]. 

@@ -15,7 +15,7 @@
  * the License, or (at your option) any later version.
  */
  
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 NexText t0 = NexText(0, 2, "t0");
 NexSlider h0 = NexSlider(0, 1, "h0");

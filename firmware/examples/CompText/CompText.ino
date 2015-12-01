@@ -16,7 +16,7 @@
  * the License, or (at your option) any later version.
  */
 
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 void t0PopCallback(void *ptr);
 void b0PopCallback(void *ptr);

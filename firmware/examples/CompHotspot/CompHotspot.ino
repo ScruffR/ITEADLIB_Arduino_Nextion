@@ -15,7 +15,7 @@
  * the License, or (at your option) any later version.
  */
 
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 NexHotspot hot0    = NexHotspot(0, 1, "hot0");
 NexHotspot hot1    = NexHotspot(0, 2, "hot1");

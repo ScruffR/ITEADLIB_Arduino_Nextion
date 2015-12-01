@@ -17,7 +17,7 @@
  */
 
 
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 NexProgressBar j0  = NexProgressBar(0, 3, "j0");
 NexButton btn_up   = NexButton(0, 1, "btn_up");

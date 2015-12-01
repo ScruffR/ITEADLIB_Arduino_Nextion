@@ -16,7 +16,7 @@
  * the License, or (at your option) any later version.
  */
 
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 NexButton b0 = NexButton(0, 2, "b0");
 NexButton b1 = NexButton(0, 5, "b1");

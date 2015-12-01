@@ -14,7 +14,7 @@
  * the License, or (at your option) any later version.
  */
  
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 NexPage page0    = NexPage(0, 0, "page0");
 NexPage page1    = NexPage(1, 0, "page1");

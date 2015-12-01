@@ -16,7 +16,7 @@
  */
 
 
-#include "Nextion.h"
+#include "ITEADLIB_Nextion/Nextion.h"
 
 /*
  * Declare a picture object [page id:0,component id:1, component name: "p0"]. 
