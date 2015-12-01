@@ -17,7 +17,11 @@
 #ifndef __NEXTOUCH_H__
 #define __NEXTOUCH_H__
 
+#if defined(SPARK)
 #include "application.h"
+#else
+#include "Arduino.h"
+#endif
 #include "NexConfig.h"
 #include "NexObject.h"
 
@@ -45,14 +49,14 @@ typedef void (*NexTouchEventCb)(void *ptr);
 class NexTouch: public NexObject
 {
 public: /* static methods */    
-    static void iterate(NexTouch **list, uint8_t pid, uint8_t cid, int32_t event, void *value);
+    static void iterate(NexTouch **list, uint8_t pid, uint8_t cid, int32_t event, void *value = NULL);
 
 public: /* methods */
 
     /**
      * @copydoc NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value);
      */
-    NexTouch(uint8_t pid, uint8_t cid, const char *name, void *value);
+    NexTouch(uint8_t pid, uint8_t cid, const char *name, void *value = NULL);
 
     /**
      * Attach an callback function of push touch event. 

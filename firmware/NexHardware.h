@@ -14,7 +14,11 @@
  */
 #ifndef __NEXHARDWARE_H__
 #define __NEXHARDWARE_H__
+#if defined(SPARK)
 #include "application.h"
+#else
+#include "Arduino.h"
+#endif
 #include "NexConfig.h"
 #include "NexTouch.h"
 

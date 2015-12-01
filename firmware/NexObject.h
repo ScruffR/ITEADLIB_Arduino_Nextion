@@ -15,7 +15,11 @@
  */
 #ifndef __NEXOBJECT_H__
 #define __NEXOBJECT_H__
+#if defined(SPARK)
 #include "application.h"
+#else
+#include "Arduino.h"
+#endif
 #include "NexConfig.h"
 /**
  * @addtogroup CoreAPI 
@@ -61,7 +65,7 @@ public: /* methods */
      * @param cid - component id.    
      * @param name - pointer to an unique name in range of all components. 
      */
-    NexObject(uint8_t pid, uint8_t cid, const char *name, void *value);
+    NexObject(uint8_t pid, uint8_t cid, const char *name, void *value = NULL);
 
     /**
      * Print current object'address, page id, component id and name. 

@@ -32,7 +32,7 @@ public: /* methods */
     /**
      * @copydoc NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value);
      */
-    NexWaveform(uint8_t pid, uint8_t cid, const char *name, void *value);
+    NexWaveform(uint8_t pid, uint8_t cid, const char *name, void *value = NULL);
     
     /**
      * Add value to show. 

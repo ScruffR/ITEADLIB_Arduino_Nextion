@@ -38,7 +38,7 @@ public: /* methods */
     /**
      * @copydoc NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value);
      */
-    NexTimer(uint8_t pid, uint8_t cid, const char *name, void *value);
+    NexTimer(uint8_t pid, uint8_t cid, const char *name, void *value = NULL);
 
     /**
      * Attach an callback function of timer respond event. 
