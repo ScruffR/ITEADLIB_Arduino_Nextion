@@ -6,7 +6,7 @@
 
 ##Known Issues with Particle port:
 
-  - Not all blocking code adapted to maintain cloud connection (Particle.process())
+  - ...
 
 --------------------------------------------------------------------------------
 # Introduction
