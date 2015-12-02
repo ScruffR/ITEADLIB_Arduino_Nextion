@@ -4,6 +4,11 @@
 
 --------------------------------------------------------------------------------
 
+##Known Issues with Particle port:
+
+  - Not all blocking code adapted to maintain cloud connection (Particle.process())
+
+--------------------------------------------------------------------------------
 # Introduction
 
 Nextion Arduino library provides an easy-to-use way to manipulate Nextion serial
@@ -64,6 +69,9 @@ can be open in your browser such as Chrome, Firefox or any one you like.
 
 For example:
 
+  - Particle Core
+  - Particle Photon/P0/P1
+  - Particle Electron
   - Iteaduino MEGA2560
   - Iteaduino UNO
   - Arduino MEGA2560
