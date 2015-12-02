@@ -227,10 +227,12 @@ bool recvRetCommandFinished(uint32_t timeout)
 }
 
 
-bool nexInit(void)
+bool nexInit(uint32_t baudRate)
 {
     bool ret1 = false;
     bool ret2 = false;
+
+    nexSerial.begin(baudRate);
     
     sendCommand("");
     sendCommand("bkcmd=1");
@@ -436,6 +438,8 @@ bool setDefaultBaudrate(uint32_t defaultBaudrate)
     {
         dbSerialPrintln("setDefaultBaudrate err ");
     }
+
+    nexSerial.begin(defaultBaudrate);
 
     return ret; 
 }

@@ -30,11 +30,11 @@
  */
 
 /**
- * Init Nextion.  
+ * Init Nextion and setup the serial port
  * 
  * @return true if success, false for failure. 
  */
-bool nexInit(void);
+bool nexInit(uitn32_t baudRate = 9600);
 
 /**
  * Listen touch event and calling callbacks attached before.
