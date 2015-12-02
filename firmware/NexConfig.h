@@ -42,9 +42,9 @@
 #define dbSerialPrintln(a)  dbSerial.println(a)
 #define dbSerialBegin(a)    dbSerial.begin(a)
 #else
-#define dbSerialPrint(a)    do{}while(0)
-#define dbSerialPrintln(a)  do{}while(0)
-#define dbSerialBegin(a)    do{}while(0)
+#define dbSerialPrint(a)    ; // used to be do {} while(0)
+#define dbSerialPrintln(a)  ; // used to be do {} while(0)
+#define dbSerialBegin(a)    ; // used to be do {} while(0)
 #endif
 
 /**

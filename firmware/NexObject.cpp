@@ -35,7 +35,10 @@ void NexObject::setObjValue(uint8_t type, void *value)
         case NEX_EVENT_STRING:
         //while (*((unsigned char *)(value+i)) != 0)
         //{
-         // *((unsigned char *)(__value+i)) = *((unsigned char *)(value+i));
+        //#if defined(SPARK)
+        //Particle.process();
+        //#endif
+        // *((unsigned char *)(__value+i)) = *((unsigned char *)(value+i));
         //  i++;
         //}        
         break;

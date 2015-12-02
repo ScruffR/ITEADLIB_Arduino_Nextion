@@ -112,8 +112,14 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
     start = millis();
     while (millis() - start <= timeout)
     {
+#if defined(SPARK)
+      Particle.process();
+#endif
         while (nexSerial.available())
         {
+#if defined(SPARK)
+          Particle.process();
+#endif
             c = nexSerial.read();
             if (str_start_flag)
             {
@@ -166,6 +172,9 @@ void sendCommand(const char* cmd)
 {
     while (nexSerial.available())
     {
+#if defined(SPARK)
+        Particle.process();
+#endif
         nexSerial.read();
     }
     
@@ -240,6 +249,9 @@ void nexLoop(NexTouch *nex_listen_list[])
     
     while (nexSerial.available() > 0)
     {   
+#if defined(SPARK)
+      Particle.process();
+#endif
         delay(10);
         c = nexSerial.read();
         
