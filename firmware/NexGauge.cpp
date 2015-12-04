@@ -22,7 +22,7 @@ NexGauge::NexGauge(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 bool NexGauge::getValue(uint32_t *number) 
 {
-  return NexObj::getValue("val", number);
+  return NexObject::getValue("val", number);
   //char cmd[128] = "get ";
   //strcat(cmd, getObjName());
   //strcat(cmd, ".val");
@@ -32,7 +32,7 @@ bool NexGauge::getValue(uint32_t *number)
 
 bool NexGauge::setValue(uint32_t number)
 {
-  return NextObj::setValue("val", number);
+  return NextObject::setValue("val", number);
   //char cmd[128];
   //strcpy(cmd, getObjName());
   //strcat(cmd, ".val=");
