@@ -100,7 +100,7 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
     uint16_t ret = 0;
     bool str_start_flag = false;
     uint8_t cnt_0xff = 0;
-    char temp[len] = "";
+    char temp[len] = { '\0' };
     int  tempIdx = 0;
 
     uint8_t c = 0;
@@ -198,9 +198,9 @@ void sendCommand(const char* cmd)
  *
  */
 bool recvRetCommandFinished(uint32_t timeout)
-{    
-    bool ret = false;
-    uint8_t temp[4] = "";
+{
+  bool ret = false;
+  uint8_t temp[4] = { '\0' };
     
     nexSerial.setTimeout(timeout);
     if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
@@ -424,7 +424,7 @@ bool setDefaultBaudrate(uint32_t defaultBaudrate)
     bool ret = false;
     char cmd[16] = "bauds=";
 
-    utoa(defaultBaudrate, &buf[strlen(cmd)], 10);
+    utoa(defaultBaudrate, &cmd[strlen(cmd)], 10);
     sendCommand(cmd);
     delay(10);
 
