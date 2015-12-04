@@ -21,7 +21,8 @@
 #include "Arduino.h"
 #endif
 #include "NexConfig.h"
-/**
+#include "NexHardware.h"
+ /**
  * @addtogroup CoreAPI 
  * @{ 
  */
