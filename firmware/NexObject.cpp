@@ -98,3 +98,53 @@ void NexObject::printObjInfo(void)
     dbSerialPrintln("]");
 }
 
+bool NexObject::getValue(const char* valueType, uint32_t* value)
+{
+  //char cmd[128];
+  //snprintf(cmd, sizeof(cmd), "get %s.%s", getObjName(), valueType);
+  char cmd[128] = "get ";
+  strcat(cmd, getObjName());
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  sendCommand(cmd);
+  return recvRetNumber(number);
+}
+
+bool NexObject::setValue(const char* valueType, uint32_t value)
+{
+  char cmd[128];
+  //snprintf(cmd, sizeof(cmd), "%s.%s=%d", getObjName(), valueType, value);
+  strcpy(cmd, getObjName());
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  strcat(cmd, "=");
+  utoa(value, &cmd[strlen(cmd)], 10);
+  sendCommand(cmd);
+  return recvRetCommandFinished();
+}
+
+uint16_t NexObject::getString(const char* valueType, char* text, uint16_t len)
+{
+  //char cmd[128];
+  //snprintf(cmd, sizeof(cmd), "get %s.%s", getObjName(), valueType);
+  char cmd[128] = "get ";
+  strcat(cmd, getObjName());
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  sendCommand(cmd);
+  return recvRetString(text, len);
+}
+
+bool NexObject::setString(const char* valueType, const char* text)
+{
+  char cmd[128];
+  //snprintf(cmd, sizeof(cmd), "%s.%s=\"%s\"", getObjName(), valueType, text);
+  strcpy(cmd, getObjName());
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  strcat(cmd, "=\"");
+  strcat(cmd, text);
+  strcat(cmd, "\"");
+  sendCommand(cmd);
+  return recvRetCommandFinished();
+}

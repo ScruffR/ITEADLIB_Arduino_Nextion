@@ -34,7 +34,7 @@
  * 
  * @return true if success, false for failure. 
  */
-bool nexInit(uint32_t baudRate = 9600);
+bool nexInit(uint32_t baudrate = 9600);
 
 /**
  * Listen touch event and calling callbacks attached before.
@@ -60,7 +60,8 @@ bool recvRetCommandFinished(uint32_t timeout = 100);
 
 bool sendCurrentPageId(uint8_t* pageId);
 bool setCurrentBrightness(uint8_t dimValue);
-bool setDefaultBaudrate(uint32_t baudrate);
+bool setDefaultBaudrate(uint32_t baudRate);
+bool setBaudrate(uint32_t baudrate);
 void sendRefreshAll(void);
 
 #endif /* #ifndef __NEXHARDWARE_H__ */

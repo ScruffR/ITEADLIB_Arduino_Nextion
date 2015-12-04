@@ -108,8 +108,14 @@ public: /* methods */
      * @return none 
      */
     void setObjValue(uint8_t type, void *value);
-    
-private: /* data */ 
+
+protected: /* helper methods */
+  bool getValue(const char* valueType, uint32_t* value);
+  bool setValue(const char* valueType, uint32_t value);
+  uint16_t getString(const char* valueType, char* text, uint16_t len);
+  bool setString(const char* valueType, const char* text);
+
+private: /* data */
     uint8_t __pid; /* Page ID */
     uint8_t __cid; /* Component ID */
     const char *__name; /* An unique name */

@@ -20,26 +20,23 @@ NexGauge::NexGauge(uint8_t pid, uint8_t cid, const char *name, void *value)
 {
 }
 
-bool NexGauge::getValue(uint32_t *number)
+bool NexGauge::getValue(uint32_t *number) 
 {
-    String cmd = String("get ");
-    cmd += getObjName();
-    cmd += ".val";
-    sendCommand(cmd.c_str());
-    return recvRetNumber(number);
+  return NexObj::getValue("val", number);
+  //char cmd[128] = "get ";
+  //strcat(cmd, getObjName());
+  //strcat(cmd, ".val");
+  //sendCommand(cmd);
+  //return recvRetNumber(number);
 }
 
 bool NexGauge::setValue(uint32_t number)
 {
-    char buf[10] = {0};
-    String cmd;
-    
-    utoa(number, buf, 10);
-    cmd += getObjName();
-    cmd += ".val=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NextObj::setValue("val", number);
+  //char cmd[128];
+  //strcpy(cmd, getObjName());
+  //strcat(cmd, ".val=");
+  //utoa(number, &cmd[strlen(cmd)], 10);
+  //sendCommand(cmd);
+  //return recvRetCommandFinished();
 }
- 

@@ -32,55 +32,21 @@ void NexTimer::detachTimer(void)
 
 bool NexTimer::getCycle(uint32_t *number)
 {
-    String cmd = String("get ");
-    cmd += getObjName();
-    cmd += ".tim";
-    sendCommand(cmd.c_str());
-    return recvRetNumber(number);
+  return NexObject::getValue("tim", number);
 }
 
 bool NexTimer::setCycle(uint32_t number)
 {
-    char buf[10] = {0};
-    String cmd;
-    if (number < 50)
-    {
-        number = 50;
-    }
-    utoa(number, buf, 10);
-    cmd += getObjName();
-    cmd += ".tim=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  if (number < 50) number = 50;
+  return NexObject("tim", number);
 }
-
 
 bool NexTimer::enable(void)
 {
-    char buf[10] = {0};
-    String cmd;
-    utoa(1, buf, 10);
-    cmd += getObjName();
-    cmd += ".en=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NexObject::setValue("en", 1);
 }
 
 bool NexTimer::disable(void)
 {
-    char buf[10] = {0};
-    String cmd;
-    utoa(0, buf, 10);
-    cmd += getObjName();
-    cmd += ".en=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NexObject::setValue("en", 0);
 }
-
-

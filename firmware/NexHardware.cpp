@@ -14,24 +14,24 @@
  */
 #include "NexHardware.h"
 
-#define NEX_RET_CMD_FINISHED            (0x01)
-#define NEX_RET_EVENT_LAUNCHED          (0x88)
-#define NEX_RET_EVENT_UPGRADED          (0x89)
+#define NEX_RET_CMD_FINISHED                (0x01)
+#define NEX_RET_EVENT_LAUNCHED              (0x88)
+#define NEX_RET_EVENT_UPGRADED              (0x89)
 #define NEX_RET_EVENT_TOUCH_HEAD            (0x65)     
 #define NEX_RET_EVENT_POSITION_HEAD         (0x67)
 #define NEX_RET_EVENT_SLEEP_POSITION_HEAD   (0x68)
 #define NEX_RET_CURRENT_PAGE_ID_HEAD        (0x66)
 #define NEX_RET_STRING_HEAD                 (0x70)
 #define NEX_RET_NUMBER_HEAD                 (0x71)
-#define NEX_RET_VALUE_HEAD                 (0x72)
-#define NEX_RET_INVALID_CMD             (0x00)
-#define NEX_RET_INVALID_COMPONENT_ID    (0x02)
-#define NEX_RET_INVALID_PAGE_ID         (0x03)
-#define NEX_RET_INVALID_PICTURE_ID      (0x04)
-#define NEX_RET_INVALID_FONT_ID         (0x05)
-#define NEX_RET_INVALID_BAUD            (0x11)
-#define NEX_RET_INVALID_VARIABLE        (0x1A)
-#define NEX_RET_INVALID_OPERATION       (0x1B)
+#define NEX_RET_VALUE_HEAD                  (0x72)
+#define NEX_RET_INVALID_CMD                 (0x00)
+#define NEX_RET_INVALID_COMPONENT_ID        (0x02)
+#define NEX_RET_INVALID_PAGE_ID             (0x03)
+#define NEX_RET_INVALID_PICTURE_ID          (0x04)
+#define NEX_RET_INVALID_FONT_ID             (0x05)
+#define NEX_RET_INVALID_BAUD                (0x11)
+#define NEX_RET_INVALID_VARIABLE            (0x1A)
+#define NEX_RET_INVALID_OPERATION           (0x1B)
 
 /*
  * Receive uint32_t data. 
@@ -100,7 +100,9 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
     uint16_t ret = 0;
     bool str_start_flag = false;
     uint8_t cnt_0xff = 0;
-    String temp = String("");
+    char temp[len] = "";
+    int  tempIdx = 0;
+
     uint8_t c = 0;
     long start;
 
@@ -131,9 +133,10 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
                         break;
                     }
                 }
-                else
+                else if (tempIdx < sizeof(temp)-1)
                 {
-                    temp += (char)c;
+                    temp[tempIdx++]= (char)c;
+                    temp[tempIdx] = '\0';  // keep string terminated
                 }
             }
             else if (NEX_RET_STRING_HEAD == c)
@@ -148,14 +151,14 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
         }
     }
 
-    ret = temp.length();
+    ret = strlen(temp);
     ret = ret > len ? len : ret;
-    strncpy(buffer, temp.c_str(), ret);
+    strncpy(buffer, temp, ret);
     
 __return:
 
     dbSerialPrint("recvRetString[");
-    dbSerialPrint(temp.length());
+    dbSerialPrint(strlen(temp));
     dbSerialPrint(",");
     dbSerialPrint(temp);
     dbSerialPrintln("]");
@@ -197,7 +200,7 @@ void sendCommand(const char* cmd)
 bool recvRetCommandFinished(uint32_t timeout)
 {    
     bool ret = false;
-    uint8_t temp[4] = {0};
+    uint8_t temp[4] = "";
     
     nexSerial.setTimeout(timeout);
     if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
@@ -227,12 +230,12 @@ bool recvRetCommandFinished(uint32_t timeout)
 }
 
 
-bool nexInit(uint32_t baudRate)
+bool nexInit(uint32_t baudrate)
 {
     bool ret1 = false;
     bool ret2 = false;
 
-    nexSerial.begin(baudRate);
+    nexSerial.begin(baudrate);
     
     sendCommand("");
     sendCommand("bkcmd=1");
@@ -386,12 +389,10 @@ bool sendCurrentPageId(uint8_t* pageId)
 bool setCurrentBrightness(uint8_t dimValue)
 {
     bool ret = false;
-    char buf[10] = {0};
-    String cmd;
-    utoa(dimValue, buf, 10);
-    cmd += "dim=";
-    cmd += buf;
-    sendCommand(cmd.c_str());
+    char cmd[16] = "dim=";
+
+    utoa(dimValue, &cmd[strlen(cmd)], 10);
+    sendCommand(cmd);
     delay(10);
 
     if(recvRetCommandFinished())
@@ -421,12 +422,10 @@ bool setCurrentBrightness(uint8_t dimValue)
 bool setDefaultBaudrate(uint32_t defaultBaudrate)
 {
     bool ret = false;
-    char buf[10] = {0};
-    String cmd;
-    utoa(defaultBaudrate, buf, 10);
-    cmd += "bauds=";
-    cmd += buf;
-    sendCommand(cmd.c_str());
+    char cmd[16] = "bauds=";
+
+    utoa(defaultBaudrate, &buf[strlen(cmd)], 10);
+    sendCommand(cmd);
     delay(10);
 
     if(recvRetCommandFinished())
@@ -443,6 +442,42 @@ bool setDefaultBaudrate(uint32_t defaultBaudrate)
 
     return ret; 
 }
+
+
+/**
+* Set current baudrate.
+*
+* @param  baudrate - baudrate, it supports 2400,4800,9600,19200,38400,57600,115200.
+*
+* @retval true - success.
+* @retval false - failed.
+*/
+bool setBaudrate(uint32_t baudrate)
+{
+  bool ret = false;
+  char cmd[16] = "baud=";
+
+  utoa(baudrate, &cmd[strlen(cmd)], 10);
+  sendCommand(cmd);           // send in new baudrate using the current baudrate
+  delay(10);
+
+  nexSerial.flush();          // dump all returned data, since not usable with new baudrate
+  nexSerial.begin(baudrate);  // activate new baudrate on MCU side too
+  sendCommand("");            // trigger test transmission
+
+  if (recvRetCommandFinished())
+  {
+    dbSerialPrintln("setDefaultBaudrate ok ");
+    ret = true;
+  }
+  else
+  {
+    dbSerialPrintln("setDefaultBaudrate err ");
+  }
+
+  return ret;
+}
+
 
 void sendRefreshAll(void)
 {

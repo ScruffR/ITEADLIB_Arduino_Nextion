@@ -21,51 +21,20 @@ NexSlider::NexSlider(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 bool NexSlider::getValue(uint32_t *number)
 {
-    String cmd = String("get ");
-    cmd += getObjName();
-    cmd += ".val";
-    sendCommand(cmd.c_str());
-    return recvRetNumber(number);
+  return NexObject::getValue("val", number);
 }
 
 bool NexSlider::setValue(uint32_t number)
 {
-    char buf[10] = {0};
-    String cmd;
-    
-    utoa(number, buf, 10);
-    cmd += getObjName();
-    cmd += ".val=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NexObject::setValue("val", number);
 }
 
 bool NexSlider::setMaxVal(uint32_t number)
 {
-    char buf[10] = {0};
-    String cmd;
-    
-    utoa(number, buf, 10);
-    cmd += getObjName();
-    cmd += ".maxval=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NexObject::setValue("maxval", number);
 }
 
 bool NexSlider::setMinVal(uint32_t number)
 {
-    char buf[10] = {0};
-    String cmd;
-    
-    utoa(number, buf, 10);
-    cmd += getObjName();
-    cmd += ".minval=";
-    cmd += buf;
-
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();
+  return NexObject::setValue("minval", number);
 }

@@ -22,22 +22,22 @@ NexButton::NexButton(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 uint16_t NexButton::getText(char *buffer, uint16_t len)
 {
-    String cmd;
-    cmd += "get ";
-    cmd += getObjName();
-    cmd += ".txt";
-    sendCommand(cmd.c_str());
-    return recvRetString(buffer,len);
+  return NexObject::getString("txt", buffer, len);
+  //char cmd[128] = "get ";
+  //strcat(cmd, getObjName());
+  //strcat(cmd, ".txt");
+  //sendCommand(cmd);
+  //return recvRetString(text, len);
 }
 
 bool NexButton::setText(const char *buffer)
 {
-    String cmd;
-    cmd += getObjName();
-    cmd += ".txt=\"";
-    cmd += buffer;
-    cmd += "\"";
-    sendCommand(cmd.c_str());
-    return recvRetCommandFinished();    
+  return NexObject::setString("txt", buffer);
+  //char cmd[128];
+  //strcpy(cmd, getObjName());
+  //strcat(cmd, ".txt=\"");
+  //strcat(cmd, text);
+  //strcat(cmd, "\"");
+  //sendCommand(cmd);
+  //return recvRetCommandFinished();
 }
-
