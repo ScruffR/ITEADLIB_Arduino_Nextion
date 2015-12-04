@@ -32,7 +32,7 @@ bool NexGauge::getValue(uint32_t *number)
 
 bool NexGauge::setValue(uint32_t number)
 {
-  return NextObject::setValue("val", number);
+  return NexObject::setValue("val", number);
   //char cmd[128];
   //strcpy(cmd, getObjName());
   //strcat(cmd, ".val=");
