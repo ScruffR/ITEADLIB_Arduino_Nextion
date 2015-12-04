@@ -22,7 +22,7 @@ NexCrop::NexCrop(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 bool NexCrop::getPic(uint32_t *number)
 {
-  NexObject::getValue("picc", number;)
+  NexObject::getValue("picc", number);
   //char cmd[128] = "get ";
   //strcat(cmd, getObjName());
   //strcat(cmd, ".picc");
