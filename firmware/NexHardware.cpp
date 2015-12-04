@@ -100,11 +100,12 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
     uint16_t ret = 0;
     bool str_start_flag = false;
     uint8_t cnt_0xff = 0;
-    char temp[len] = { '\0' };
-    int  tempIdx = 0;
-
     uint8_t c = 0;
     long start;
+
+    int  tempIdx = 0;
+    char temp[len];
+    memset(temp, 0, len);
 
     if (!buffer || len == 0)
     {
@@ -200,7 +201,7 @@ void sendCommand(const char* cmd)
 bool recvRetCommandFinished(uint32_t timeout)
 {
   bool ret = false;
-  uint8_t temp[4] = { '\0' };
+  uint8_t temp[4] = "";
     
     nexSerial.setTimeout(timeout);
     if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
