@@ -1,17 +1,21 @@
 /**
- * @file NexHardware.cpp
- *
- * The implementation of base API for using Nextion. 
- *
- * @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
- * @date    2015/8/11
- * @copyright 
- * Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- */
+* @file NexHardware.cpp
+*
+* The implementation of base API for using Nextion. 
+*
+* @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
+* @date    2015/8/11
+* @copyright 
+* Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Port for Particle platform (particle.io)
+* by BSpranger & ScruffR (Dec. 2015)
+*/
+
 #include "NexHardware.h"
 
 #define NEX_RET_CMD_FINISHED                (0x01)
@@ -103,7 +107,7 @@ uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
     uint8_t c = 0;
     long start;
 
-    int  tempIdx = 0;
+    uint32_t tempIdx = 0;
     char temp[len];
     memset(temp, 0, len);
 
@@ -483,4 +487,57 @@ bool setBaudrate(uint32_t baudrate)
 void sendRefreshAll(void)
 {
     sendCommand("ref 0");
+}
+
+
+bool NexGetValue(const char* objName, const char* valueType, uint32_t* value)
+{
+  //char cmd[32];
+  //snprintf(cmd, sizeof(cmd), "get %s.%s", objName, valueType);
+  char cmd[32] = "get ";
+  strcat(cmd, objName);
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  sendCommand(cmd);
+  return recvRetNumber(value);
+}
+
+bool NexSetValue(const char* objName, const char* valueType, uint32_t value)
+{
+  char cmd[32];
+  //snprintf(cmd, sizeof(cmd), "%s.%s=%d", objName, valueType, value);
+  strcpy(cmd, objName);
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  strcat(cmd, "=");
+  utoa(value, &cmd[strlen(cmd)], 10);
+  sendCommand(cmd);
+  return recvRetCommandFinished();
+}
+
+uint16_t NexGetString(const char* objName, const char* valueType, char* text, uint16_t len)
+{
+  //char cmd[32];
+  //snprintf(cmd, sizeof(cmd), "get %s.%s", objName, valueType);
+  char cmd[32] = "get ";
+  strcat(cmd, objName);
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  sendCommand(cmd);
+  return recvRetString(text, len);
+}
+
+bool NexSetString(const char* objName, const char* valueType, const char* text)
+{
+  char cmd[strlen(text) + 32];
+  memset(cmd, 0, sizeof(cmd));
+  //snprintf(cmd, sizeof(cmd), "%s.%s=\"%s\"", objName, valueType, text);
+  strcpy(cmd, objName);
+  strcat(cmd, ".");
+  strcat(cmd, valueType);
+  strcat(cmd, "=\"");
+  strcat(cmd, text);
+  strcat(cmd, "\"");
+  sendCommand(cmd);
+  return recvRetCommandFinished();
 }

@@ -1,18 +1,22 @@
 /**
- * @file NexObject.h
- *
- * The definition of class NexObject. 
- *
- * @author Wu Pengfei (email:<pengfei.wu@itead.cc>)
- * @date 2015/8/13
- *
- * @copyright 
- * Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- */
+* @file NexObject.h
+*
+* The definition of class NexObject. 
+*
+* @author Wu Pengfei (email:<pengfei.wu@itead.cc>)
+* @date 2015/8/13
+*
+* @copyright 
+* Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Port for Particle platform (particle.io)
+* by BSpranger & ScruffR (Dec. 2015)
+*/
+
 #ifndef __NEXOBJECT_H__
 #define __NEXOBJECT_H__
 #if defined(SPARK)
@@ -21,7 +25,7 @@
 #include "Arduino.h"
 #endif
 #include "NexConfig.h"
-#include "NexHardware.h"
+
  /**
  * @addtogroup CoreAPI 
  * @{ 
@@ -110,11 +114,10 @@ public: /* methods */
      */
     void setObjValue(uint8_t type, void *value);
 
-protected: /* helper methods */
-  bool getValue(const char* valueType, uint32_t* value);
-  bool setValue(const char* valueType, uint32_t value);
-  uint16_t getString(const char* valueType, char* text, uint16_t len);
-  bool setString(const char* valueType, const char* text);
+    bool getValue(const char* valueType, uint32_t* value);
+    bool setValue(const char* valueType, uint32_t value);
+    uint16_t getString(const char* valueType, char* text, uint16_t len);
+    bool setString(const char* valueType, const char* text);
 
 private: /* data */
     uint8_t __pid; /* Page ID */

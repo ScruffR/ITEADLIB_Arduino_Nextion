@@ -1,17 +1,21 @@
 /**
- * @file NexHardware.h
- *
- * The definition of base API for using Nextion. 
- *
- * @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
- * @date    2015/8/11
- * @copyright 
- * Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- */
+* @file NexHardware.h
+*
+* The definition of base API for using Nextion. 
+*
+* @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
+* @date    2015/8/11
+* @copyright 
+* Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Port for Particle platform (particle.io)
+* by BSpranger & ScruffR (Dec. 2015)
+*/
+
 #ifndef __NEXHARDWARE_H__
 #define __NEXHARDWARE_H__
 #if defined(SPARK)
@@ -63,5 +67,10 @@ bool setCurrentBrightness(uint8_t dimValue);
 bool setDefaultBaudrate(uint32_t baudRate);
 bool setBaudrate(uint32_t baudrate);
 void sendRefreshAll(void);
+
+bool      NexGetValue(const char* objName, const char* valueType, uint32_t* value);
+bool      NexSetValue(const char* objName, const char* valueType, uint32_t value);
+uint16_t  NexGetString(const char* objName, const char* valueType, char* text, uint16_t len);
+bool      NexSetString(const char* objName, const char* valueType, const char* text);
 
 #endif /* #ifndef __NEXHARDWARE_H__ */

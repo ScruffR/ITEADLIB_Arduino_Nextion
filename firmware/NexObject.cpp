@@ -1,18 +1,23 @@
 /**
- * @file NexObject.cpp
- *
- * The implementation of class NexObject. 
- *
- * @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
- * @date    2015/8/13
- * @copyright 
- * Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- */
+* @file NexObject.cpp
+*
+* The implementation of class NexObject. 
+*
+* @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
+* @date    2015/8/13
+* @copyright 
+* Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
+*
+* Port for Particle platform (particle.io)
+* by BSpranger & ScruffR (Dec. 2015)
+*/
+
 #include "NexObject.h"
+#include "NexHardware.h"
 
 NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value)
 {
@@ -24,7 +29,6 @@ NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 void NexObject::setObjValue(uint8_t type, void *value)
 {
-    uint8_t i = 0;
     if (__value)
     {
         switch (type)
@@ -100,51 +104,20 @@ void NexObject::printObjInfo(void)
 
 bool NexObject::getValue(const char* valueType, uint32_t* value)
 {
-  //char cmd[128];
-  //snprintf(cmd, sizeof(cmd), "get %s.%s", getObjName(), valueType);
-  char cmd[128] = "get ";
-  strcat(cmd, getObjName());
-  strcat(cmd, ".");
-  strcat(cmd, valueType);
-  sendCommand(cmd);
-  return recvRetNumber(number);
+  return NexGetValue(getObjName(), valueType, value);
 }
 
 bool NexObject::setValue(const char* valueType, uint32_t value)
 {
-  char cmd[128];
-  //snprintf(cmd, sizeof(cmd), "%s.%s=%d", getObjName(), valueType, value);
-  strcpy(cmd, getObjName());
-  strcat(cmd, ".");
-  strcat(cmd, valueType);
-  strcat(cmd, "=");
-  utoa(value, &cmd[strlen(cmd)], 10);
-  sendCommand(cmd);
-  return recvRetCommandFinished();
+  return NexSetValue(getObjName(), valueType, value);
 }
 
 uint16_t NexObject::getString(const char* valueType, char* text, uint16_t len)
 {
-  //char cmd[128];
-  //snprintf(cmd, sizeof(cmd), "get %s.%s", getObjName(), valueType);
-  char cmd[128] = "get ";
-  strcat(cmd, getObjName());
-  strcat(cmd, ".");
-  strcat(cmd, valueType);
-  sendCommand(cmd);
-  return recvRetString(text, len);
+  return NexGetString(getObjName(), valueType, text, len);
 }
 
 bool NexObject::setString(const char* valueType, const char* text)
 {
-  char cmd[128];
-  //snprintf(cmd, sizeof(cmd), "%s.%s=\"%s\"", getObjName(), valueType, text);
-  strcpy(cmd, getObjName());
-  strcat(cmd, ".");
-  strcat(cmd, valueType);
-  strcat(cmd, "=\"");
-  strcat(cmd, text);
-  strcat(cmd, "\"");
-  sendCommand(cmd);
-  return recvRetCommandFinished();
+  return NexSetString(getObjName(), valueType, text);
 }
