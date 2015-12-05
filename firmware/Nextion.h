@@ -41,6 +41,9 @@
 #include "NexText.h"
 #include "NexWaveform.h"
 #include "NexTimer.h"
+#include "NexNumber.h"
+#include "NexDualStateButton.h"
 
+#include "NexGraphing.h"
 
 #endif /* #ifndef __NEXTION_H__ */
