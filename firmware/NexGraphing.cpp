@@ -56,9 +56,9 @@ void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
   strcat(cmd, ",");
   utoa(y, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(w, &cmd[strlen(cmd)], 10);
+  utoa(x+w, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(h, &cmd[strlen(cmd)], 10);
+  utoa(y+h, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(color, &cmd[strlen(cmd)], 10);
   sendCommand(cmd);
