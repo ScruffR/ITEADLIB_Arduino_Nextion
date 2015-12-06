@@ -1,7 +1,7 @@
 /**
-* @file NexText.h
+* @file NexVar.h
 *
-* The definition of class NexText. 
+* The definition of class NexVar. 
 *
 * @author Wu Pengfei (email:<pengfei.wu@itead.cc>)
 * @date 2015/8/13
@@ -14,11 +14,11 @@
 * the License, or (at your option) any later version.
 *
 * Port for Particle platform (particle.io)
-* by BSpranger & ScruffR (Dec. 2015)
+* by ScruffR (Dec. 2015)
 */
  
-#ifndef __NEXTEXT_H__
-#define __NEXTEXT_H__
+#ifndef __NEXVAL_H__
+#define __NEXVAL_H__
 
 #include "NexTouch.h"
 #include "NexHardware.h"
@@ -28,16 +28,16 @@
  */
 
 /**
- * NexText component.
+ * NexVar component.
  */
-class NexText: public NexTouch
+class NexVar: public NexTouch
 {
 public: /* methods */
     /**
-     * @copydoc NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name, void *value);
+     * @copydoc NexObject::NexObject(uint8_t pid, uint8_t cid, const char *name);
      */
-    NexText(uint8_t pid, uint8_t cid, const char *name, void *value = NULL);
-    
+    NexVar(uint8_t pid, uint8_t cid, const char *name);
+
     /**
      * Get text attribute of component.
      *
@@ -46,28 +46,34 @@ public: /* methods */
      * @return The real length of text returned. 
      */
     uint16_t getText(char *buffer, uint16_t len);
-    
+
     /**
      * Set text attribute of component.
      *
      * @param buffer - text buffer terminated with '\0'. 
      * @return true if success, false for failure. 
      */
-    bool setText(const char *buffer);    
+    bool setText(const char *buffer);
 
     /**
-    * Set text color attribute of component.
-    *
-    * @return true if success, false for failure.
-    */
-    bool setForeColor(uint32_t number);
+     * Get the value of slider. 
+     * 
+     * @param number - an output parameter to save the value of slider.  
+     * 
+     * @retval true - success. 
+     * @retval false - failed. 
+     */
+    bool getValue(uint32_t *number);
 
     /**
-    * Set text color attribute of component.
-    *
-    * @return true if success, false for failure.
-    */
-    bool setBackColor(uint32_t number);
+     * Set the value of slider.
+     *
+     * @param number - the value of slider.  
+     *
+     * @retval true - success. 
+     * @retval false - failed. 
+     */
+    bool setValue(uint32_t number);
 };
 
 /**

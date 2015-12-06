@@ -25,20 +25,20 @@ NexSlider::NexSlider(uint8_t pid, uint8_t cid, const char *name, void *value)
 
 bool NexSlider::getValue(uint32_t *number)
 {
-  return NexObject::getValue("val", number);
+  return NexObject::getValue(NexVALUE, number);
 }
 
 bool NexSlider::setValue(uint32_t number)
 {
-  return NexObject::setValue("val", number);
+  return NexObject::setValue(NexVALUE, number);
 }
 
 bool NexSlider::setMaxVal(uint32_t number)
 {
-  return NexObject::setValue("maxval", number);
+  return NexObject::setValue(NexMAXVALUE, number);
 }
 
 bool NexSlider::setMinVal(uint32_t number)
 {
-  return NexObject::setValue("minval", number);
+  return NexObject::setValue(NexMINVALUE, number);
 }

@@ -178,14 +178,14 @@ __return:
  */
 void sendCommand(const char* cmd)
 {
-    while (nexSerial.available())
-    {
 #if defined(SPARK)
-        Particle.process();
-#endif
+  nexSerial.flush();
+#else
+  while (nexSerial.available())
+    {
         nexSerial.read();
     }
-    
+#endif
     nexSerial.print(cmd);
     nexSerial.write(0xFF);
     nexSerial.write(0xFF);
