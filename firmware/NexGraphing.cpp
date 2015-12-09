@@ -1,7 +1,7 @@
 /**
 * @file NexGraphing.cpp
 *
-* The definition of base API for using Nextion.
+* The definition of base API for basic graphics on Nextion.
 *
 * @author  Andreas Rothenwänder (aka ScruffR <http://community.particle.io>)
 * @date    2015/12
@@ -27,6 +27,14 @@
  *
  */
 
+inline void swap(uint32_t* v1, uint32_t* v2)
+{
+  uint32_t dmy;
+  dmy = *v2;
+  *v2 = *v1;
+  *v1 = dmy;
+}
+
 void clearScreen(uint32_t color)
 {
   char cmd[16] = "cls ";
@@ -34,9 +42,17 @@ void clearScreen(uint32_t color)
   sendCommand(cmd);
 }
 
+void plot(uint32_t x, uint32_t y, uint32_t color)
+{
+  drawLine(x, y, x, y, color);
+}
+
 void drawLine(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color)
 {
   char cmd[32] = "line ";
+
+  if (x1 < x2) swap(&x1, &x2);
+  if (y1 < y2) swap(&y1, &y2);
   utoa(x1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y1, &cmd[strlen(cmd)], 10);
@@ -49,24 +65,32 @@ void drawLine(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color
   sendCommand(cmd);
 }
 
-void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+void drawRectAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color)
 {
   char cmd[32] = "draw ";
-  utoa(x, &cmd[strlen(cmd)], 10);
+
+  if (x1 < x2) swap(&x1, &x2);
+  if (y1 < y2) swap(&y1, &y2);
+  utoa(x1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(y, &cmd[strlen(cmd)], 10);
+  utoa(y1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(x+w, &cmd[strlen(cmd)], 10);
+  utoa(x2, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(y+h, &cmd[strlen(cmd)], 10);
+  utoa(y2, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(color, &cmd[strlen(cmd)], 10);
   sendCommand(cmd);
+}
+void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+{
+  drawRectAbs(x, y, x + w, y + h);
 }
 
 void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 {
   char cmd[32] = "fill ";
+
   utoa(x, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y, &cmd[strlen(cmd)], 10);
@@ -78,10 +102,17 @@ void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
   utoa(color, &cmd[strlen(cmd)], 10);
   sendCommand(cmd);
 }
+void fillRectAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color)
+{
+  if (x1 < x2) swap(&x1, &x2);
+  if (y1 < y2) swap(&y1, &y2);
+  fillRect(x1, y1, x2-x1, y2-y1);
+}
 
 void drawCircle(uint32_t x, uint32_t y, uint32_t r, uint32_t color)
 {
   char cmd[32] = "cir ";
+  
   utoa(x, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y, &cmd[strlen(cmd)], 10);
@@ -95,6 +126,7 @@ void drawCircle(uint32_t x, uint32_t y, uint32_t r, uint32_t color)
 void drawPic(uint32_t x, uint32_t y, uint32_t picID)
 {
   char cmd[24] = "pic ";
+  
   utoa(x, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y, &cmd[strlen(cmd)], 10);
@@ -106,6 +138,7 @@ void drawPic(uint32_t x, uint32_t y, uint32_t picID)
 void cropPic(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t picID)
 {
   char cmd[32] = "picq ";
+  
   utoa(x, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y, &cmd[strlen(cmd)], 10);
@@ -123,6 +156,7 @@ void drawText(uint32_t x, uint32_t y, uint32_t w, uint32_t h, NexTEXTALIGN_t cen
   const char* text)
 {
   char cmd[48 + strlen(text)];
+  
   memset(cmd, 0, sizeof(cmd));
   strcpy(cmd, "xstr ");
   utoa(x, &cmd[strlen(cmd)], 10);
@@ -149,3 +183,12 @@ void drawText(uint32_t x, uint32_t y, uint32_t w, uint32_t h, NexTEXTALIGN_t cen
   strcat(cmd, "\"");
   sendCommand(cmd);
 }
+void drawTextAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, NexTEXTALIGN_t centerX, NexTEXTALIGN_t centerY,
+  uint32_t fontID, uint32_t fontColor, uint32_t backColor, NexBACKGROUND_t backStyle,
+  const char* text)
+{
+  if (x1 < x2) swap(&x1, &x2);
+  if (y1 < y2) swap(&y1, &y2);
+  drawText(x1, y1, x2 - x1, y2 - y1, centerX, centerY, fontID, fontColor, backColor, backStyle, text);
+}
+

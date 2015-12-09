@@ -93,6 +93,8 @@
 #define dbSerialBegin(a)    ; // used to be do {} while(0)
 #endif
 
+extern int bkCmd;             // command execution response behaviour (default 1 onSuccess)
+
 /**
  * @}
  */

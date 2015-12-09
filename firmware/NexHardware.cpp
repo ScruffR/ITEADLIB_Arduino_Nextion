@@ -1,11 +1,11 @@
 /**
 * @file NexHardware.cpp
 *
-* The implementation of base API for using Nextion. 
+* The implementation of base API for using Nextion.
 *
 * @author  Wu Pengfei (email:<pengfei.wu@itead.cc>)
 * @date    2015/8/11
-* @copyright 
+* @copyright
 * Copyright (C) 2014-2015 ITEAD Intelligent Systems Co., Ltd. \n
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License as
@@ -37,138 +37,144 @@
 #define NEX_RET_INVALID_VARIABLE            (0x1A)
 #define NEX_RET_INVALID_OPERATION           (0x1B)
 
+
+int bkCmd = 1;             // command execution response behaviour 
+                           // 0 .. no response
+                           // 1 .. onSuccess (default
+                           // 2 .. noFail
+                           // 3 .. always
+
 /*
- * Receive uint32_t data. 
- * 
- * @param number - save uint32_t data. 
- * @param timeout - set timeout time. 
+ * Receive uint32_t data.
  *
- * @retval true - success. 
+ * @param number - save uint32_t data.
+ * @param timeout - set timeout time.
+ *
+ * @retval true - success.
  * @retval false - failed.
  *
  */
 bool recvRetNumber(uint32_t *number, uint32_t timeout)
 {
-    bool ret = false;
-    uint8_t temp[8] = {0};
+  bool ret = false;
+  uint8_t temp[8] = { 0 };
 
-    if (!number)
-    {
-        goto __return;
-    }
-    
-    nexSerial.setTimeout(timeout);
-    if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
-    {
-        goto __return;
-    }
+  if (!number)
+  {
+    goto __return;
+  }
 
-    if (temp[0] == NEX_RET_NUMBER_HEAD
-        && temp[5] == 0xFF
-        && temp[6] == 0xFF
-        && temp[7] == 0xFF
-        )
-    {
-        *number = (temp[4] << 24) | (temp[3] << 16) | (temp[2] << 8) | (temp[1]);
-        ret = true;
-    }
+  nexSerial.setTimeout(timeout);
+  if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
+  {
+    goto __return;
+  }
+
+  if (temp[0] == NEX_RET_NUMBER_HEAD
+    && temp[5] == 0xFF
+    && temp[6] == 0xFF
+    && temp[7] == 0xFF
+    )
+  {
+    *number = (temp[4] << 24) | (temp[3] << 16) | (temp[2] << 8) | (temp[1]);
+    ret = true;
+  }
 
 __return:
 
-    if (ret) 
-    {
-        dbSerialPrint("recvRetNumber :");
-        dbSerialPrintln(*number);
-    }
-    else
-    {
-        dbSerialPrintln("recvRetNumber err");
-    }
-    
-    return ret;
+  if (ret)
+  {
+    dbSerialPrint("recvRetNumber :");
+    dbSerialPrintln(*number);
+  }
+  else
+  {
+    dbSerialPrintln("recvRetNumber err");
+  }
+
+  return ret;
 }
 
 
 /*
- * Receive string data. 
- * 
- * @param buffer - save string data. 
- * @param len - string buffer length. 
- * @param timeout - set timeout time. 
+ * Receive string data.
+ *
+ * @param buffer - save string data.
+ * @param len - string buffer length.
+ * @param timeout - set timeout time.
  *
  * @return the length of string buffer.
  *
  */
 uint16_t recvRetString(char *buffer, uint16_t len, uint32_t timeout)
 {
-    uint16_t ret = 0;
-    bool str_start_flag = false;
-    uint8_t cnt_0xff = 0;
-    uint8_t c = 0;
-    long start;
+  uint16_t ret = 0;
+  bool str_start_flag = false;
+  uint8_t cnt_0xff = 0;
+  uint8_t c = 0;
+  uint32_t start;
 
-    uint32_t tempIdx = 0;
-    char temp[len];
-    memset(temp, 0, len);
+  uint16_t bufIdx = 0;
+  //uint16_t tempIdx = 0;
+  //char temp[len];
+  //memset(temp, 0, len);
 
-    if (!buffer || len == 0)
-    {
-        goto __return;
-    }
-    
-    start = millis();
-    while (millis() - start <= timeout)
+  if (!buffer || len == 0)
+  {
+    goto __return;
+  }
+  memset(buffer, 0, len);
+
+  start = millis();
+  while (cnt_0xff < 3 && millis() - start <= timeout)
+  {
+#if defined(SPARK)
+    Particle.process();
+#endif
+    while (nexSerial.available())
     {
 #if defined(SPARK)
       Particle.process();
 #endif
-        while (nexSerial.available())
+      c = nexSerial.read();
+      if (str_start_flag)
+      {
+        if (0xFF == c)
         {
-#if defined(SPARK)
-          Particle.process();
-#endif
-            c = nexSerial.read();
-            if (str_start_flag)
-            {
-                if (0xFF == c)
-                {
-                    cnt_0xff++;                    
-                    if (cnt_0xff >= 3)
-                    {
-                        break;
-                    }
-                }
-                else if (tempIdx < sizeof(temp)-1)
-                {
-                    temp[tempIdx++]= (char)c;
-                    temp[tempIdx] = '\0';  // keep string terminated
-                }
-            }
-            else if (NEX_RET_STRING_HEAD == c)
-            {
-                str_start_flag = true;
-            }
-        }
-        
-        if (cnt_0xff >= 3)
-        {
+          cnt_0xff++;
+          if (cnt_0xff >= 3)
+          {
             break;
+          }
         }
+        else if ((int)bufIdx < len - 1)
+        {
+          buffer[bufIdx++] = (char)c;
+          //temp[tempIdx++] = (char)c;
+          //temp[tempIdx] = '\0';  // memset makes sure of this already
+        }
+      }
+      else if (NEX_RET_STRING_HEAD == c)
+      {
+        str_start_flag = true;
+      }
     }
+  }
 
-    ret = strlen(temp);
-    ret = ret > len ? len : ret;
-    strncpy(buffer, temp, ret);
-    
+  ret = bufIdx;
+  //ret = strlen(temp);
+  //ret = ret > len ? len : ret;
+  //strncpy(buffer, temp, ret);
+
 __return:
 
-    dbSerialPrint("recvRetString[");
-    dbSerialPrint(strlen(temp));
-    dbSerialPrint(",");
-    dbSerialPrint(temp);
-    dbSerialPrintln("]");
+  dbSerialPrint("recvRetString[");
+  dbSerialPrint(strlen(buffer));
+  dbSerialPrint(",");
+  dbSerialPrint(buffer);
+  dbSerialPrintln("]");
 
-    return ret;
+  return ret;
 }
 
 /*
@@ -178,274 +184,298 @@ __return:
  */
 void sendCommand(const char* cmd)
 {
-#if defined(SPARK)
-  nexSerial.flush();
-#else
-  while (nexSerial.available())
-    {
-        nexSerial.read();
-    }
-#endif
-    nexSerial.print(cmd);
-    nexSerial.write(0xFF);
-    nexSerial.write(0xFF);
-    nexSerial.write(0xFF);
+  while (nexSerial.read() >= 0);  // flush RX buffer only
+  nexSerial.print(cmd);
+  nexSerial.print(NexCMDTERM);
+  //nexSerial.write(0xFF);
+  //nexSerial.write(0xFF);
+  //nexSerial.write(0xFF);
 }
 
+/*
+* Send a batch of commands (skript) each terminated by three 0xFF 
+* bytes to Nextion.
+* If noRR is set TRUE
+*   For the batch the command execution result response gets 
+*   temporarily deactivated.
+*   After completion it will be reactivated and set to the 
+*   previously saved state (bkCmd).
+*
+* @param cmd  - the string of command.
+* @param noRR - indicate if result response should be deactivated (default false)
+*/
+void sendSkript(const char* cmd, bool noRR)
+{
+  char buf[12];
+  while (nexSerial.read() >= 0);            // flush RX buffer only
+  if (noRR)
+    nexSerial.print("bkcmd=0\xff\xff\xff"); // deactivate result response
+  nexSerial.print(cmd);                 
+  if (noRR)
+  {
+    snprintf(buf, sizeof(buf), "bkcmd=%d\xff\xff\xff", bkCmd);
+    nexSerial.print(buf);                     // reactivate previous command response
+  }
+}
 
 /*
- * Command is executed successfully. 
+ * Command is executed successfully.
  *
  * @param timeout - set timeout time.
  *
  * @retval true - success.
- * @retval false - failed. 
+ * @retval false - failed.
  *
  */
 bool recvRetCommandFinished(uint32_t timeout)
 {
   bool ret = false;
   uint8_t temp[4] = "";
-    
-    nexSerial.setTimeout(timeout);
-    if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
-    {
-        ret = false;
-    }
 
-    if (temp[0] == NEX_RET_CMD_FINISHED
-        && temp[1] == 0xFF
-        && temp[2] == 0xFF
-        && temp[3] == 0xFF
-        )
-    {
-        ret = true;
-    }
+  nexSerial.setTimeout(timeout);
+  if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
+  {
+    ret = false;
+  }
 
-    if (ret) 
-    {
-        dbSerialPrintln("recvRetCommandFinished ok");
-    }
-    else
-    {
-        dbSerialPrintln("recvRetCommandFinished err");
-    }
-    
-    return ret;
+  if (temp[0] == NEX_RET_CMD_FINISHED
+    && temp[1] == 0xFF
+    && temp[2] == 0xFF
+    && temp[3] == 0xFF
+    )
+  {
+    ret = true;
+  }
+
+  if (ret)
+  {
+    dbSerialPrintln("recvRetCommandFinished ok");
+  }
+  else
+  {
+    dbSerialPrintln("recvRetCommandFinished err");
+  }
+
+  return ret;
 }
 
 
 bool nexInit(uint32_t baudrate)
 {
-    bool ret1 = false;
-    bool ret2 = false;
+  bool ret1 = false;
+  bool ret2 = false;
 
-    nexSerial.begin(baudrate);
-    
-    sendCommand("");
-    sendCommand("bkcmd=1");
-    ret1 = recvRetCommandFinished();
-    sendCommand("page 0");
-    ret2 = recvRetCommandFinished();
-    return ret1 && ret2;
+  nexSerial.begin(baudrate);
+
+  sendCommand("");
+  sendCommand("bkcmd=1");  // only return success results
+  ret1 = recvRetCommandFinished();
+  sendCommand("page 0");   // show home page
+  ret2 = recvRetCommandFinished();
+  return ret1 && ret2;
 }
 
 void nexLoop(NexTouch *nex_listen_list[])
 {
-    static uint8_t __buffer[20];
-    
-    uint16_t i;
-    uint8_t c;  
-    
-    while (nexSerial.available() > 0)
-    {   
+  static uint8_t __buffer[20];
+
+  uint16_t i;
+  uint8_t c;
+
+  while (nexSerial.available())
+  {
 #if defined(SPARK)
-      Particle.process();
+    Particle.process();
+    delay(5);
+#else
+    delay(10); 
 #endif
-        delay(10);
-        c = nexSerial.read();
-        
-        if (NEX_RET_EVENT_TOUCH_HEAD == c)
+    c = nexSerial.read();
+
+    if (NEX_RET_EVENT_TOUCH_HEAD == c)
+    {
+      if (nexSerial.available() >= 6)
+      {
+        __buffer[0] = c;
+        for (i = 1; i < 7; i++)
         {
-            if (nexSerial.available() >= 6)
-            {
-                __buffer[0] = c;  
-                for (i = 1; i < 7; i++)
-                {
-                    __buffer[i] = nexSerial.read();
-                }
-                __buffer[i] = 0x00;
-                
-                if (0xFF == __buffer[4] && 0xFF == __buffer[5] && 0xFF == __buffer[6])
-                {
-                    NexTouch::iterate(nex_listen_list, __buffer[1], __buffer[2], (int32_t)__buffer[3], NULL);
-                }
-                
-            }
+          __buffer[i] = nexSerial.read();
         }
-        else if( NEX_RET_CURRENT_PAGE_ID_HEAD == c)
+        __buffer[i] = 0x00;
+
+        if (0xFF == __buffer[4] && 0xFF == __buffer[5] && 0xFF == __buffer[6])
         {
-            dbSerialPrint("page cmd:");
-            if (nexSerial.available() >= 4)
-            {
-                __buffer[0] = c;  
-                for (i = 1; i < 5; i++)
-                {
-                    __buffer[i] = nexSerial.read();
-                }
-                __buffer[i] = 0x00;
-                
-                if (0xFF == __buffer[2] && 0xFF == __buffer[3] && 0xFF == __buffer[4])
-                {
-                    dbSerialPrintln(__buffer[1]);
-                    NexTouch::iterate(nex_listen_list, __buffer[1], 0, (int32_t)NEX_EVENT_PUSH, NULL);
-                }
-                
-            }
+          NexTouch::iterate(nex_listen_list, __buffer[1], __buffer[2], (int32_t)__buffer[3], NULL);
         }
-        else if (NEX_RET_VALUE_HEAD == c)
-        {
-            dbSerialPrint("value cmd:");
-            if (nexSerial.available() >= 10)
-            {
-                __buffer[0] = c;  
-                for (i = 1; i < 12; i++)
-                {
-                    __buffer[i] = nexSerial.read();
-                }
-                __buffer[i] = 0x00;
-                
-                if (0xFF == __buffer[i-1] && 0xFF == __buffer[i-2] && 0xFF == __buffer[i-3])
-                {
-                    dbSerialPrint(" Page:");
-                    dbSerialPrint(__buffer[1]);
-                    dbSerialPrint(" Component:");
-                    dbSerialPrint(__buffer[2]);
-                    dbSerialPrint(" Value:");
-                    i = __buffer[4] | (((unsigned long)__buffer[5]) << 8) | (((unsigned long)__buffer[6]) << 16) | (((unsigned long)__buffer[6]) << 24);
-                    dbSerialPrintln(i);
-                    NexTouch::iterate(nex_listen_list, __buffer[1], __buffer[2], (int32_t)__buffer[3], (void *)&(__buffer[4]));
-                }
-            }   
-        }
+
+      }
     }
+    else if (NEX_RET_CURRENT_PAGE_ID_HEAD == c)
+    {
+      dbSerialPrint("page cmd:");
+      if (nexSerial.available() >= 4)
+      {
+        __buffer[0] = c;
+        for (i = 1; i < 5; i++)
+        {
+          __buffer[i] = nexSerial.read();
+        }
+        __buffer[i] = 0x00;
+
+        if (0xFF == __buffer[2] && 0xFF == __buffer[3] && 0xFF == __buffer[4])
+        {
+          dbSerialPrintln(__buffer[1]);
+          NexTouch::iterate(nex_listen_list, __buffer[1], 0, (int32_t)NEX_EVENT_PUSH, NULL);
+        }
+
+      }
+    }
+    else if (NEX_RET_VALUE_HEAD == c)
+    {
+      dbSerialPrint("value cmd:");
+      if (nexSerial.available() >= 10)
+      {
+        __buffer[0] = c;
+        for (i = 1; i < 12; i++)
+        {
+          __buffer[i] = nexSerial.read();
+        }
+        __buffer[i] = 0x00;
+
+        if (0xFF == __buffer[i - 1] && 0xFF == __buffer[i - 2] && 0xFF == __buffer[i - 3])
+        {
+          dbSerialPrint(" Page:");
+          dbSerialPrint(__buffer[1]);
+          dbSerialPrint(" Component:");
+          dbSerialPrint(__buffer[2]);
+          dbSerialPrint(" Value:");
+          i = __buffer[4] | (((unsigned long)__buffer[5]) << 8) | (((unsigned long)__buffer[6]) << 16) | (((unsigned long)__buffer[6]) << 24);
+          dbSerialPrintln(i);
+          NexTouch::iterate(nex_listen_list, __buffer[1], __buffer[2], (int32_t)__buffer[3], (void *)&(__buffer[4]));
+        }
+      }
+    }
+  }
 }
 
 /**
- * Return current page id.   
- *  
- * @param pageId - output parameter,to save page id.  
- * 
- * @retval true - success. 
- * @retval false - failed. 
+ * Return current page id.
+ *
+ * @param pageId - output parameter,to save page id.
+ *
+ * @retval true - success.
+ * @retval false - failed.
  */
 bool sendCurrentPageId(uint8_t* pageId)
 {
 
-    bool ret = false;
-    uint8_t temp[5] = {0};
+  bool ret = false;
+  uint8_t temp[5] = { 0 };
 
-    if (!pageId)
-    {
-        goto __return;
-    }
-    sendCommand("sendme");
-    delay(50);
-    nexSerial.setTimeout(100);
-    if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
-    {
-        goto __return;
-    }
+  if (!pageId)
+  {
+    goto __return;
+  }
+  sendCommand("sendme");
+  delay(50);
+  nexSerial.setTimeout(100);
+  if (sizeof(temp) != nexSerial.readBytes((char *)temp, sizeof(temp)))
+  {
+    goto __return;
+  }
 
-    if (temp[0] == NEX_RET_CURRENT_PAGE_ID_HEAD
+  if (temp[0] == NEX_RET_CURRENT_PAGE_ID_HEAD
     && temp[2] == 0xFF
     && temp[3] == 0xFF
     && temp[4] == 0xFF
     )
-    {
-        *pageId = temp[1];
-        ret = true;
-    }
+  {
+    *pageId = temp[1];
+    ret = true;
+  }
 
-    __return:
+__return:
 
-    if (ret) 
-    {
-        dbSerialPrint("recvPageId :");
-        dbSerialPrintln(*pageId);
-    }
-    else
-    {
-        dbSerialPrintln("recvPageId err");
-    }
+  if (ret)
+  {
+    dbSerialPrint("recvPageId :");
+    dbSerialPrintln(*pageId);
+  }
+  else
+  {
+    dbSerialPrintln("recvPageId err");
+  }
 
-    return ret;
+  return ret;
 
 }
 
 /**
- * Set current backlight brightness value. 
+ * Set current backlight brightness value.
  *
  * @param dimValue - current backlight brightness value.
- * 
- * @retval true - success. 
+ *
+ * @retval true - success.
  * @retval false - failed.
  */
-bool setCurrentBrightness(uint8_t dimValue)
+bool setCurrentBrightness(uint8_t dimValue, bool setDefault)
 {
-    bool ret = false;
-    char cmd[16] = "dim=";
+  bool ret = false;
+  char cmd[16] = "dim=";
 
-    utoa(dimValue, &cmd[strlen(cmd)], 10);
-    sendCommand(cmd);
-    delay(10);
+  if (setDefault)
+    strcpy(cmd, "dims=");
 
-    if(recvRetCommandFinished())
-    {   
-        dbSerialPrint("setCurrentBrightness[ ");
-        dbSerialPrint(dimValue);
-        dbSerialPrintln("]ok ");
-      
-        ret = true; 
-    }
-    else 
-    {
-        dbSerialPrintln("setCurrentBrightness err ");
-    }
+  utoa(dimValue, &cmd[strlen(cmd)], 10);
+  sendCommand(cmd);
+  delay(10);
 
-    return ret;    
+  if (recvRetCommandFinished())
+  {
+    dbSerialPrint("setCurrentBrightness[ ");
+    dbSerialPrint(dimValue);
+    dbSerialPrintln("]ok ");
+
+    ret = true;
+  }
+  else
+  {
+    dbSerialPrintln("setCurrentBrightness err ");
+  }
+
+  return ret;
 }
 
 /**
- * Set default baudrate. 
+ * Set default baudrate.
  *
  * @param  defaultBaudrate - default baudrate,it supports 2400,4800,9600,19200,38400,57600,115200.
- * 
- * @retval true - success. 
+ *
+ * @retval true - success.
  * @retval false - failed.
- */  
+ */
 bool setDefaultBaudrate(uint32_t defaultBaudrate)
 {
-    bool ret = false;
-    char cmd[16] = "bauds=";
+  bool ret = false;
+  char cmd[16] = "bauds=";
 
-    utoa(defaultBaudrate, &cmd[strlen(cmd)], 10);
-    sendCommand(cmd);
-    delay(10);
+  utoa(defaultBaudrate, &cmd[strlen(cmd)], 10);
+  sendCommand(cmd);
+  delay(10);
 
-    if(recvRetCommandFinished())
-    {
-        dbSerialPrintln("setDefaultBaudrate ok ");
-        ret = true; 
-    }
-    else 
-    {
-        dbSerialPrintln("setDefaultBaudrate err ");
-    }
+  if (recvRetCommandFinished())
+  {
+    dbSerialPrintln("setDefaultBaudrate ok ");
+    ret = true;
+  }
+  else
+  {
+    dbSerialPrintln("setDefaultBaudrate err ");
+  }
 
-    nexSerial.begin(defaultBaudrate);
+  nexSerial.begin(defaultBaudrate);
 
-    return ret; 
+  return ret;
 }
 
 
@@ -467,17 +497,18 @@ bool setBaudrate(uint32_t baudrate)
   delay(10);
 
   nexSerial.flush();          // dump all returned data, since not usable with new baudrate
+  nexSerial.end();            // close port (or pretend to ;-)
   nexSerial.begin(baudrate);  // activate new baudrate on MCU side too
   sendCommand("");            // trigger test transmission
 
   if (recvRetCommandFinished())
   {
-    dbSerialPrintln("setDefaultBaudrate ok ");
+    dbSerialPrintln("setBaudrate ok ");
     ret = true;
   }
   else
   {
-    dbSerialPrintln("setDefaultBaudrate err ");
+    dbSerialPrintln("setBaudrate err ");
   }
 
   return ret;
@@ -486,7 +517,7 @@ bool setBaudrate(uint32_t baudrate)
 
 void sendRefreshAll(void)
 {
-    sendCommand("ref 0");
+  sendCommand("ref 0");
 }
 
 

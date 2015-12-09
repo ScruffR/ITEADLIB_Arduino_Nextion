@@ -28,9 +28,10 @@
 #endif
 
 #include "NexConfig.h"
-#include "NexTouch.h"
+#include "NexCommands.h"
 #include "NexHardware.h"
 
+#include "NexTouch.h"
 #include "NexButton.h"
 #include "NexCrop.h"
 #include "NexDualStateButton.h"
