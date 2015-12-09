@@ -44,7 +44,7 @@
 #define NexTSPACEX    "spax=%d%s"       // set horizontal font spacing (default 0)
 #define NexTSPACEY    "spay=%d%s"       // set vertical font spacing (default 0)
 #define NexDRAWCOLOR  "thc=%d%s"        // set touch drawing color
-#define NexDRAW       "thdraw=%d%s"     // activate(1)/deactivate(0) touch drawing
+#define NexDRAW       "thdra=%d%s"      // activate(1)/deactivate(0) touch drawing
 #define NexSLEEPCOM   "ussp=%d%s"       // enter sleep after x seconds no serial communication (default 0=never)
 #define NexSLEEPTOUCH "thsp=%d%s"       // enter sleep after x seconds no touch event (default 0=never)
 #define NexWAKETOUCH  "thup=%d%s"       // wake on touch event (yes(1)/no(0))
@@ -78,6 +78,7 @@ int NexSendCommand(const char *cmdPattern, ...)
     if (strcmp(&buf[ret - 3], NexCMDTERM))  // if command was not properly terminated
       nexSerial.print(NexCMDTERM);          //   do it now
   }
+  dbSerialPrint(buf);
 
   return ret;
 }

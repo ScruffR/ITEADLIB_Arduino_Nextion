@@ -51,8 +51,8 @@ void drawLine(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color
 {
   char cmd[32] = "line ";
 
-  if (x1 < x2) swap(&x1, &x2);
-  if (y1 < y2) swap(&y1, &y2);
+  if (x1 > x2) swap(&x1, &x2);
+  if (y1 > y2) swap(&y1, &y2);
   utoa(x1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y1, &cmd[strlen(cmd)], 10);
@@ -69,22 +69,22 @@ void drawRectAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t co
 {
   char cmd[32] = "draw ";
 
-  if (x1 < x2) swap(&x1, &x2);
-  if (y1 < y2) swap(&y1, &y2);
+  if (x1 > x2) swap(&x1, &x2);
+  if (y1 > y2) swap(&y1, &y2);
   utoa(x1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(y1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(x2, &cmd[strlen(cmd)], 10);
+  utoa(x2-1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
-  utoa(y2, &cmd[strlen(cmd)], 10);
+  utoa(y2-1, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(color, &cmd[strlen(cmd)], 10);
   sendCommand(cmd);
 }
 void drawRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 {
-  drawRectAbs(x, y, x + w, y + h);
+  drawRectAbs(x, y, x + w, y + h, color);
 }
 
 void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
@@ -104,9 +104,9 @@ void fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 }
 void fillRectAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color)
 {
-  if (x1 < x2) swap(&x1, &x2);
-  if (y1 < y2) swap(&y1, &y2);
-  fillRect(x1, y1, x2-x1, y2-y1);
+  if (x1 > x2) swap(&x1, &x2);
+  if (y1 > y2) swap(&y1, &y2);
+  fillRect(x1, y1, x2-x1, y2-y1, color);
 }
 
 void drawCircle(uint32_t x, uint32_t y, uint32_t r, uint32_t color)
@@ -187,8 +187,8 @@ void drawTextAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, NexTEXTALIG
   uint32_t fontID, uint32_t fontColor, uint32_t backColor, NexBACKGROUND_t backStyle,
   const char* text)
 {
-  if (x1 < x2) swap(&x1, &x2);
-  if (y1 < y2) swap(&y1, &y2);
+  if (x1 > x2) swap(&x1, &x2);
+  if (y1 > y2) swap(&y1, &y2);
   drawText(x1, y1, x2 - x1, y2 - y1, centerX, centerY, fontID, fontColor, backColor, backStyle, text);
 }
 
