@@ -286,10 +286,9 @@ void nexLoop(NexTouch *nex_listen_list[])
   {
 #if defined(SPARK)
     Particle.process();
-    delay(5);
-#else
-    delay(10); 
 #endif
+    delay(10); 
+
     c = nexSerial.read();
 
     if (NEX_RET_EVENT_TOUCH_HEAD == c)
