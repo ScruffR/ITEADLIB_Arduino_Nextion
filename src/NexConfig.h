@@ -80,8 +80,9 @@
 /**
  * Define nexSerial for communicate with Nextion touch panel. 
  */
+#ifndef nexSerial
 #define nexSerial Serial1
-
+#endif
 
 #ifdef DEBUG_SERIAL_ENABLE
 #define dbSerialPrint(a)    dbSerial.print(a)
