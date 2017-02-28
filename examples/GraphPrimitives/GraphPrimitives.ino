@@ -16,6 +16,7 @@
  */ 
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 void setup(void)
 {

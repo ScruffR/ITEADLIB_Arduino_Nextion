@@ -16,6 +16,7 @@
  */
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 NexHotspot hot0    = NexHotspot(0, 1, "hot0");
 NexHotspot hot1    = NexHotspot(0, 2, "hot1");

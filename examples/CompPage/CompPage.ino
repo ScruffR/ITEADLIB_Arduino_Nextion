@@ -15,6 +15,7 @@
  */
  
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 NexPage page0    = NexPage(0, 0, "page0");
 NexPage page1    = NexPage(1, 0, "page1");

@@ -17,6 +17,7 @@
 
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 /*
  * Declare a picture object [page id:0,component id:1, component name: "p0"]. 

@@ -14,6 +14,7 @@
  * the License, or (at your option) any later version.
  */ 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 #define LEVEL_HIGH      (30)
 #define LEVEL_LOW       (0)

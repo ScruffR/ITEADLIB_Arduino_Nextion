@@ -20,6 +20,7 @@
 */
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 void n0PopCallback(void *ptr);
 void b0PopCallback(void *ptr);

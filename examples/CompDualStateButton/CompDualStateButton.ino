@@ -16,6 +16,7 @@
 */
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 /*
  * Declare a dual state button object [page id:0,component id:1, component name: "bt0"]. 

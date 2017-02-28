@@ -17,6 +17,7 @@
  */
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 NexButton b0 = NexButton(0, 2, "b0");
 NexButton b1 = NexButton(0, 5, "b1");

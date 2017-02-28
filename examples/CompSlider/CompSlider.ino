@@ -16,6 +16,7 @@
  */
  
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 NexText t0 = NexText(0, 2, "t0");
 NexSlider h0 = NexSlider(0, 1, "h0");

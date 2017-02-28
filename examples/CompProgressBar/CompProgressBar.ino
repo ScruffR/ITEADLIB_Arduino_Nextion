@@ -18,6 +18,7 @@
 
 
 #include "Nextion.h"
+USARTSerial& nexSerial = Serial1;
 
 NexProgressBar j0  = NexProgressBar(0, 3, "j0");
 NexButton btn_up   = NexButton(0, 1, "btn_up");

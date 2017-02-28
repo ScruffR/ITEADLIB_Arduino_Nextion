@@ -79,10 +79,10 @@
 
 /**
  * Define nexSerial for communicate with Nextion touch panel. 
+ * this has to be set in the main project file
  */
-#ifndef nexSerial
-#define nexSerial Serial1
-#endif
+extern USARTSerial& nexSerial;
+
 
 #ifdef DEBUG_SERIAL_ENABLE
 #define dbSerialPrint(a)    dbSerial.print(a)
