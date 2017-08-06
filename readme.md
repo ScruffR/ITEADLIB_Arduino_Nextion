@@ -6,7 +6,7 @@
 
 ##Known Issues with Particle port:
 
-  - Required test HMI/TFT files are now located under docs/examples 
+  - Required test HMI files are now located under doc/Examples (TFT have to be created with Nextion Editor from HMI files) 
   - ...
 
 --------------------------------------------------------------------------------
