@@ -6,10 +6,7 @@
 
 ##Known Issues with Particle port:
 
-  - With Particle Libraries 2.0 the samples don't come with the required test
-    HMI/TFT files anymore due to upload limitations. To get these files, visit
-    https://github.com/ScruffR/ITEADLIB_Nextion/tree/master/firmware/examples
-    which still contains the 1.0 library v0.0.12 including the now missing files
+  - Required test HMI/TFT files are now located under docs/examples 
   - ...
 
 --------------------------------------------------------------------------------
