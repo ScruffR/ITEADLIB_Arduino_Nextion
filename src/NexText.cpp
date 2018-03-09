@@ -50,4 +50,9 @@ bool NexText::setForeColor(uint32_t number)
   return NexObject::setValue("pco", number);
 }
 
+bool NexText::setBackColor(uint32_t number)
+{
+  return NexObject::setValue("bco", number);
+}
+
 
