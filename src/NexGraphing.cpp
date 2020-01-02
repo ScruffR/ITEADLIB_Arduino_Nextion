@@ -178,9 +178,10 @@ void drawText(uint32_t x, uint32_t y, uint32_t w, uint32_t h, NexTEXTALIGN_t cen
   utoa(centerY, &cmd[strlen(cmd)], 10);
   strcat(cmd, ",");
   utoa(backStyle, &cmd[strlen(cmd)], 10);
-  strcat(cmd, ",\"");
+  //strcat(cmd, ",\"");
+  strcat(cmd, ",");
   strcat(cmd, text);
-  strcat(cmd, "\"");
+  //strcat(cmd, "\"");
   sendCommand(cmd);
 }
 void drawTextAbs(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, NexTEXTALIGN_t centerX, NexTEXTALIGN_t centerY,
